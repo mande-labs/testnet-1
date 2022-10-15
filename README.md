@@ -1,3 +1,6 @@
+## Prerequisite
+Please go through the [whitepaper](https://drive.google.com/file/d/17EScDNUlaYT1Xiera20x8rYsmI3ejggj/view) to understand the mechanics
+
 ---
 
 ## Mande testnet-1
@@ -23,8 +26,7 @@ Validators earn the following fees:
 
 - Two or more CPU cores
 - At least 100 GB of disk storage
-- At least 8 GB of memory
-- At least 100 mbps of network bandwidth
+- At least 4 GB of memory
 
 ** HDD not recommended **
 
