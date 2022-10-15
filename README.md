@@ -97,3 +97,13 @@ mande-chaind tx staking edit-validator \
     --security-contact="XXXXXXXX" \
     --website="XXXXXXXX"
 ```
+
+#### Some helpful commands
+- Query outstanding rewards:
+`mande-chaind query distribution validator-outstanding-rewards mandevaloper...`
+- Withdraw rewards:
+`mande-chaind tx distribution withdraw-rewards mandevaloper... --commission --from {{KEY_NAME}} --chain-id mande-testnet-1`
+- Cast vote:
+`mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote [validator_address_to_vote] [amount] [mode]`
+`amount` can be positive or negative, `mode` - 1 for cast, 0 for uncast.
+Ex: `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote mande... 10 1`
