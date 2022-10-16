@@ -53,7 +53,7 @@ mv mande-chaind /$HOME/go/bin/
 chmod 777 /$HOME/go/bin/mande-chaind
 ```
 
-*  Generate keys
+### Generate keys
 ```bash
 mande-chaind keys add <WALLET_NAME>
 ```
@@ -61,21 +61,20 @@ to recover the wallet use the command below
 ```bash
 mande-chaind keys add <WALLET_NAME> --recover  
 ```  
-to regenerate keys with your BIP39 mnemonic
  
-*  Claim testnet coins
+###  Claim testnet coins
 ```bash
 curl -d '{"address":"<mande wallet address>"}' -H 'Content-Type: application/json' http://35.224.207.121:8080/request
 ```
 
-*  Setting up a Node
+###  Setting up a Node
 Following steps  are  rudimentary way of setting up a validator, For production we advise your [sentry architecture](https://forum.cosmos.network/t/sentry-node-architecture-overview/454) to create well defined process
 
-*  Initialize node
+###  Initialize node
 ```bash
 mande-chaind init <NODENAME> --chain-id mande-testnet-1
 ```
-*  Set genesis and peer/seed
+###  Set genesis and peer/seed
 ```bash
 curl -OL https://raw.githubusercontent.com/mande-labs/testnet-1/main/genesis.json
 mv genesis.json /root/.mande-chain/config/
@@ -83,12 +82,12 @@ peers="cd3e4f5b7f5680bbd86a96b38bc122aa46668399@34.171.132.212:26656,6780b2648bd
 seeds="cd3e4f5b7f5680bbd86a96b38bc122aa46668399@34.171.132.212:26656"
 sed -i.bak -e "s/^seeds *=.*/seeds = \"$seeds\"/; s/^persistent_peers *=.*/persistent_peers = \"$peers\"/" ~/.mande-chain/config/config.toml
 ```
-* Set mingasprice
+### Set mingasprice
 ```bash
 sed -i.bak -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.005mand\"/;" ~/.mande-chain/config/app.toml
 ```
 
-*  Set service
+###  Set service
 ```bash
 sudo tee /etc/systemd/system/mande.service > /dev/null <<EOF
 [Unit]
@@ -106,18 +105,18 @@ WantedBy=multi-user.target
 EOF
 ```
 
-*  Start node and sync
+###  Start node and sync
 ```bash
 sudo systemctl daemon-reload && sudo systemctl enable mande
 sudo systemctl restart mande && journalctl -fu mande -o cat
 ```
 
-*  Check sync
+###  Check sync
 ```bash
 curl http://locl/status sync_info "catching_up": false
 ```
 
-*  Register the validator
+###  Register the validator
 
 Run the following command to register the validator  
 ```bash
