@@ -19,10 +19,10 @@ Validators earn the following fees:
 
 ---
 
-### Joining Testnet
+*  Joining Testnet
 
 
-#### System Requirements
+*  System Requirements
 
 - Two or more CPU cores
 - At least 100 GB of disk storage
@@ -30,11 +30,14 @@ Validators earn the following fees:
 
 ** HDD not recommended **
 
-#### Binaries and Go
-
+*  Binaries and Go
+### Update dependencies
+```bash
 sudo apt update && sudo apt upgrade -y && \
 sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential bsdmainutils git make ncdu gcc git jq chrony liblz4-tool -y
-
+```
+### Install Go
+```bash
 wget https://golang.org/dl/go1.18.1.linux-amd64.tar.gz; \
 rm -rv /usr/local/go; \
 tar -C /usr/local -xzf go1.18.1.linux-amd64.tar.gz && \
@@ -42,69 +45,94 @@ rm -v go1.18.1.linux-amd64.tar.gz && \
 echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile && \
 source ~/.bash_profile && \
 go version > /dev/null
-
+```
+### Binary download
+```bash
 curl -OL https://github.com/mande-labs/testnet-1/raw/main/mande-chaind
 mv mande-chaind /$HOME/go/bin/
 chmod 777 /$HOME/go/bin/mande-chaind
-
-
-#### Generate keys
-```bash
-mande-chaind keys add [key_name]
 ```
-or
+
+*  Generate keys
 ```bash
-mande-chaind keys add [key_name] --recover  
+mande-chaind keys add <WALLET_NAME>
+```
+to recover the wallet use the command below
+```bash
+mande-chaind keys add <WALLET_NAME> --recover  
 ```  
- to regenerate keys with your BIP39 mnemonic
+to regenerate keys with your BIP39 mnemonic
  
-#### Claim testnet coins
+*  Claim testnet coins
 ```bash
-curl -d '{"address":"mande...<mande wallet address>"}' -H 'Content-Type: application/json' http://35.224.207.121:8080/request
+curl -d '{"address":"<mande wallet address>"}' -H 'Content-Type: application/json' http://35.224.207.121:8080/request
 ```
 
-#### Setting up a Node
+*  Setting up a Node
 Following steps  are  rudimentary way of setting up a validator, For production we advise your [sentry architecture](https://forum.cosmos.network/t/sentry-node-architecture-overview/454) to create well defined process
 
-* Initialize node
-	```shell
-	mande-chaind init {{NODE_NAME}} --chain-id mande-testnet-1
-	```
-* Replace the contents of your `${HOME}/.mande-chaind/config/genesis.json` with that of [genesis file](https://github.com/mande-labs/testnet-1/blob/main/genesis.json) on this repo
-* Verify checksum `jq -S -c -M "" genesis.json | sha256sum` matches `def6850afe2cb311b7909cdc9bfb6dd436b36a6fc015c3d524270a5cff050dfe`
-* Inside file `${HOME}/.mande-chaind/config/config.toml`, 
-  * set `seeds` to `"cd3e4f5b7f5680bbd86a96b38bc122aa46668399@34.171.132.212:26656"`.
-  * set `persistent_peers` to `"cd3e4f5b7f5680bbd86a96b38bc122aa46668399@34.171.132.212:26656,6780b2648bd2eb6adca2ca92a03a25b216d4f36b@34.170.16.69:26656"`
-  * If your node has a public ip, set it in `external_address = "tcp://<public-ip>:26656"`, else leave the filed empty.
-* Set `minimum-gas-prices` in `${HOME}/.mande-chaind/config/app.toml` with the minimum price you want (example `0.005mand`) for the security of the network.
-* Start node
-	```bash
-	mande-chaind start
-	```
-* Make sure you have some $MAND in your address claimed from the faucet previously.
-* Wait for the blockchain to sync. You can check the sync status using the command
-	```bash
-	curl http://localhost:26657/status sync_info "catching_up": false
-	```
-* Once `"catching_up"` is `false`, the sync is complete.
+*  Initialize node
+```bash
+mande-chaind init <NODENAME> --chain-id mande-testnet-1
+```
+*  Set genesis and peer/seed
+```bash
+curl -OL https://raw.githubusercontent.com/mande-labs/testnet-1/main/genesis.json
+mv genesis.json /root/.mande-chain/config/
+peers="cd3e4f5b7f5680bbd86a96b38bc122aa46668399@34.171.132.212:26656,6780b2648bd2eb6adca2ca92a03a25b216d4f36b@34.170.16.69:26656"
+seeds="cd3e4f5b7f5680bbd86a96b38bc122aa46668399@34.171.132.212:26656"
+sed -i.bak -e "s/^seeds *=.*/seeds = \"$seeds\"/; s/^persistent_peers *=.*/persistent_peers = \"$peers\"/" ~/.mande-chain/config/config.toml
+```
+```bash
+#### Set mingasprice
+sed -i.bak -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.005mand\"/;" ~/.mande-chain/config/app.toml
+```
 
+*  Set service
+```bash
+sudo tee /etc/systemd/system/mande.service > /dev/null <<EOF
+[Unit]
+Description=mande
+After=network.target
+[Service]
+Type=simple
+User=root
+ExecStart=/$HOME/go/bin/mande-chaind start
+Restart=on-failure
+RestartSec=10
+LimitNOFILE=65535
+[Install]
+WantedBy=multi-user.target
+EOF
+```
 
-#### Register the validator
+*  Start node and sync
+```bash
+sudo systemctl daemon-reload && sudo systemctl enable mande
+sudo systemctl restart mande && journalctl -fu mande -o cat
+```
+
+*  Check sync
+```bash
+curl http://locl/status sync_info "catching_up": false
+```
+
+*  Register the validator
 
 Run the following command to register the validator  
 ```bash
 mande-chaind tx staking create-validator \
---from {{KEY_NAME}} \
+--chain-id mande-testnet-1 \
 --amount 0cred \
 --pubkey "$(mande-chaind tendermint show-validator)" \
---chain-id mande-testnet-1 \
---moniker="{{VALIDATOR_NAME}}" \
+--from <WALLET_NAME> \
+--moniker="<MONIKER>" \
+--fees 1000mand
 ```
 
 ---
 
-
-#### Setup a Metadata profile
+*  Setup a Metadata profile
 To Improve  communication with community and core team, please add the following metadata to your validator. These  helps us  send security and chain upgrade announcement in a clear manner
 
 ```bash
@@ -112,16 +140,17 @@ mande-chaind tx staking edit-validator \
     --identity="keybase identity"
     --security-contact="XXXXXXXX" \
     --website="XXXXXXXX"
+    --from <WALLET_NAME>
 ```
 
 #### Some helpful commands
 ##### Query outstanding rewards:
 `mande-chaind query distribution validator-outstanding-rewards mandevaloper...`
 ##### Withdraw rewards:
-`mande-chaind tx distribution withdraw-rewards mandevaloper... --commission --from {{KEY_NAME}} --chain-id mande-testnet-1`
+`mande-chaind tx distribution withdraw-rewards mandevaloper... --commission --from <WALLET_NAME> --chain-id mande-testnet-1`
 ##### Cast vote:
-- `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote [validator_address_to_vote] [amount] [mode]`
+- `mande-chaind --from <WALLET_NAME> --chain-id mande-testnet-1 tx voting create-vote [validator_address_to_vote] [amount] [mode]`
 
 - `amount` can be positive or negative, `mode` - 1 for cast, 0 for uncast.
 
-- Ex: `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote mande... 10 1`
+- Ex: `mande-chaind --from <WALLET_NAME> --chain-id mande-testnet-1 tx voting create-vote mande... 10 1`
