@@ -1,7 +1,7 @@
 ## Prerequisite
 Please go through the [whitepaper](https://drive.google.com/file/d/17EScDNUlaYT1Xiera20x8rYsmI3ejggj/view) to understand the mechanics
 
----
+-------------------------------------------------------------------------------------------------
 
 ## Mande testnet-1
 
@@ -30,9 +30,23 @@ Validators earn the following fees:
 
 ** HDD not recommended **
 
-#### Binaries
+#### Binaries and Go
 
-Download our binaries from [here](https://github.com/mande-labs/testnet-1/blob/main/mande-chaind) and place it in your bin path. Ex: `/usr/local/bin/`
+sudo apt update && sudo apt upgrade -y && \
+sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential bsdmainutils git make ncdu gcc git jq chrony liblz4-tool -y
+
+wget https://golang.org/dl/go1.18.1.linux-amd64.tar.gz; \
+rm -rv /usr/local/go; \
+tar -C /usr/local -xzf go1.18.1.linux-amd64.tar.gz && \
+rm -v go1.18.1.linux-amd64.tar.gz && \
+echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> ~/.bash_profile && \
+source ~/.bash_profile && \
+go version > /dev/null
+
+curl -OL https://github.com/mande-labs/testnet-1/raw/main/mande-chaind
+mv mande-chaind /$HOME/go/bin/
+chmod 777 /$HOME/go/bin/mande-chaind
+
 
 #### Generate keys
 ```bash
