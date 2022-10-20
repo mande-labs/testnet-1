@@ -105,9 +105,11 @@ mande-chaind tx staking edit-validator \
 `mande-chaind query distribution validator-outstanding-rewards mandevaloper...`
 ##### Withdraw rewards:
 `mande-chaind tx distribution withdraw-rewards mandevaloper... --commission --from {{KEY_NAME}} --chain-id mande-testnet-1`
-##### Cast vote:
+##### Cast/Uncast vote:
 - `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote [validator_address_to_vote] [amount] [mode]`
 
-- `amount` can be positive or negative, `mode` - 1 for cast, 0 for uncast.
+- `amount` can be positive or negative (make sure, -1000000000 < amount < 1000000000, otherwise there might be unexpected behaviour which will be fixed in next phase), `mode` - 1 for cast, 0 for uncast.
 
-- Ex: `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote mande... 10 1`
+- Cast Ex: `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote mande... 10000000 1`
+
+- Uncast Ex: `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote mande... 10000000 0`
