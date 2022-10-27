@@ -130,7 +130,7 @@ Update ~/.mande-chain/config/config.toml
 * send_rate = 20000000
 * recv_rate = 20000000
 * max_packet_msg_payload_size = 10240
-* flush_throttle_timeout = “50ms"
+* flush_throttle_timeout = "50ms"
 * mempool.size = 10000
 * create_empty_blocks = false
 * indexer = “null” [If you are not running explorers using same rpc]
