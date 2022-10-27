@@ -113,3 +113,24 @@ mande-chaind tx staking edit-validator \
 - Cast Ex: `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote mande... 10000000 1`
 
 - Uncast Ex: `mande-chaind --from {{KEY_NAME}} --chain-id mande-testnet-1 tx voting create-vote mande... 10000000 0`
+
+#### Additional node performance config
+System requirements:
+- Four or more CPU cores
+- At least 100 GB of disk storage
+- At least 4 GB of RAM
+
+Increase file limit
+```bash
+ulimit -n 65536
+```
+
+Update ~/.mande-chain/config/config.toml
+* log_level = "error"
+* send_rate = 20000000
+* recv_rate = 20000000
+* max_packet_msg_payload_size = 10240
+* flush_throttle_timeout = “50ms"
+* mempool.size = 10000
+* create_empty_blocks = false
+* indexer = “null” [If you are not running explorers using same rpc]
