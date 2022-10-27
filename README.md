@@ -133,4 +133,4 @@ Update ~/.mande-chain/config/config.toml
 * flush_throttle_timeout = "50ms"
 * mempool.size = 10000
 * create_empty_blocks = false
-* indexer = “null” [If you are not running explorers using same rpc]
+* indexer = "null" [If you are not running explorers using same rpc]
