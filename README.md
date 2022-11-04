@@ -85,6 +85,7 @@ mande-chaind tx staking create-validator \
 --pubkey "$(mande-chaind tendermint show-validator)" \
 --chain-id mande-testnet-1 \
 --moniker="{{VALIDATOR_NAME}}" \
+--gas=auto --gas-adjustment=1.15
 ```
 
 ---
